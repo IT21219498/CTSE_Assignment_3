@@ -66,28 +66,32 @@
           src="./assets/bird-gull.glb"
         ></a-asset-item>
         <a-asset-item id="bike-model" src="./assets/bike.glb"></a-asset-item>
+        <a-asset-item
+          id="man-sitting-model"
+          src="./assets/man-sitting.glb"
+        ></a-asset-item>
         <audio id="bird-sound" src="./assets/bird-chirp.mp3"></audio>
       </a-assets>
 
-      <!-- Bench Marker -->
       <a-marker type="pattern" url="./assets/pattern-bench.patt">
+        <!-- Bench model -->
         <a-entity
           gltf-model="#bench-model"
-          scale="0.5 0.5 0.5"
+          scale="2 2 2"
           position="0 0 0"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 12000; easing: linear"
+        ></a-entity>
+
+        <!-- Man with animation sequence -->
+        <a-entity
+          gltf-model="#man-sitting-model"
+          scale="0.5 0.5 0.5"
+          position="0 0.3 0"
+          rotation="0 90 0"
+          animation__1="property: position; from: 0 0.3 0; to: 0 0.5 0; dur: 1000; delay: 3000; easing: easeInOutQuad; startEvents: sit-to-stand"
+          animation__2="property: position; from: 0 0.5 0; to: 2 0.5 0; dur: 2000; delay: 0; easing: linear; startEvents: start-walking"
+          animation__3="property: rotation; from: 0 90 0; to: 0 0 0; dur: 500; delay: 0; easing: linear; startEvents: turn-to-walk"
         >
         </a-entity>
-        <a-text
-          value="You find a quiet bench by the path — a perfect place to rest."
-          position="0 2 0"
-          align="center"
-          color="yellow"
-          scale="1.2 1.2 1"
-          shader="msdf"
-          font="https://cdn.aframe.io/fonts/mozillavr.fnt"
-        >
-        </a-text>
       </a-marker>
 
       <!-- Tree Marker -->
@@ -122,37 +126,17 @@
           animation__rot="property: rotation; to: 0 360 0; loop: true; dur: 6000; easing: linear"
         >
         </a-entity>
-        <a-text
-          value="A curious bird flutters above — maybe it's watching you!"
-          position="0 3.5 0"
-          align="center"
-          color="blue"
-          scale="1.1 1.1 1"
-          shader="msdf"
-          font="https://cdn.aframe.io/fonts/mozillavr.fnt"
-        >
-        </a-text>
       </a-marker>
 
       <!-- Bike Marker -->
       <a-marker type="pattern" url="./assets/pattern-bicycle.patt">
         <a-entity
           gltf-model="#bike-model"
-          scale="0.5 0.5 0.5"
-          position="0 0 0"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
+          scale="0.01 0.01 0.01"
+          position="-1 -1 -1"
+          animation="property: position; to: -2 0 0; dir: alternate; dur: 4000; loop: true; easing: linear"
         >
         </a-entity>
-        <a-text
-          value="A bike waits nearby — someone must be enjoying the ride."
-          position="0 2 0"
-          align="center"
-          color="purple"
-          scale="1.1 1.1 1"
-          shader="msdf"
-          font="https://cdn.aframe.io/fonts/mozillavr.fnt"
-        >
-        </a-text>
       </a-marker>
 
       <!-- Camera -->
@@ -162,6 +146,39 @@
       // Wait for the scene to load, then hide the loader
       document.querySelector("a-scene").addEventListener("loaded", function () {
         document.querySelector(".arjs-loader").style.display = "none";
+      });
+      // Event listeners for animations
+      document.querySelector("a-scene").addEventListener("loaded", function () {
+        setTimeout(function () {
+          // Get the man entity
+          const man = document.querySelector(
+            '[gltf-model="#man-sitting-model"]'
+          );
+
+          // Trigger first animation: stand up
+          man.emit("sit-to-stand");
+
+          // After standing, turn to walk
+          setTimeout(function () {
+            man.emit("turn-to-walk");
+          }, 4000);
+
+          // After turning, start walking
+          setTimeout(function () {
+            man.emit("start-walking");
+          }, 4500);
+
+          // Loop the sequence
+          setTimeout(function () {
+            // Reset position and start again
+            man.setAttribute("position", "0 0.3 0");
+            man.setAttribute("rotation", "0 90 0");
+            setTimeout(function () {
+              // Restart sequence
+              man.emit("sit-to-stand");
+            }, 2000);
+          }, 10000);
+        }, 5000); // Start the sequence 5 seconds after scene loads
       });
     </script>
   </body>
