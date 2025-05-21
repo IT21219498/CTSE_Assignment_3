@@ -119,10 +119,10 @@
       <a-marker type="pattern" url="./assets/pattern-bird.patt">
         <a-entity
           gltf-model="#bird-model"
-          scale="0.4 0.4 0.4"
-          position="0 2 0"
+          scale="0.04 0.04 0.04"
+          position="0 0.4 0"
           sound="src: #bird-sound; autoplay: true; loop: true"
-          animation="property: position; to: 0 3 0; dir: alternate; dur: 1500; loop: true; easing: easeInOutSine"
+          animation="property: position; to: 0 0.6 0; dir: alternate; dur: 1500; loop: true; easing: easeInOutSine"
           animation__rot="property: rotation; to: 0 360 0; loop: true; dur: 6000; easing: linear"
         >
         </a-entity>
@@ -144,11 +144,11 @@
     </a-scene>
     <script>
       // Wait for the scene to load, then hide the loader
-      document.querySelector("a-scene").addEventListener("loaded", function () {
-        document.querySelector(".arjs-loader").style.display = "none";
+      document.querySelector('a-scene').addEventListener('loaded', function () {
+        document.querySelector('.arjs-loader').style.display = 'none';
       });
       // Event listeners for animations
-      document.querySelector("a-scene").addEventListener("loaded", function () {
+      document.querySelector('a-scene').addEventListener('loaded', function () {
         setTimeout(function () {
           // Get the man entity
           const man = document.querySelector(
@@ -156,26 +156,26 @@
           );
 
           // Trigger first animation: stand up
-          man.emit("sit-to-stand");
+          man.emit('sit-to-stand');
 
           // After standing, turn to walk
           setTimeout(function () {
-            man.emit("turn-to-walk");
+            man.emit('turn-to-walk');
           }, 4000);
 
           // After turning, start walking
           setTimeout(function () {
-            man.emit("start-walking");
+            man.emit('start-walking');
           }, 4500);
 
           // Loop the sequence
           setTimeout(function () {
             // Reset position and start again
-            man.setAttribute("position", "0 0.3 0");
-            man.setAttribute("rotation", "0 90 0");
+            man.setAttribute('position', '0 0.3 0');
+            man.setAttribute('rotation', '0 90 0');
             setTimeout(function () {
               // Restart sequence
-              man.emit("sit-to-stand");
+              man.emit('sit-to-stand');
             }, 2000);
           }, 10000);
         }, 5000); // Start the sequence 5 seconds after scene loads
