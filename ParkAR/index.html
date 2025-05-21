@@ -70,75 +70,155 @@
           id="man-sitting-model"
           src="./assets/man-sitting.glb"
         ></a-asset-item>
+        <a-asset-item
+          id="forest-model"
+          src="./assets/forest.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="street-light-model"
+          src="./assets/lamp.glb"
+        ></a-asset-item>
+        <a-asset-item id="sun-model" src="./assets/sun.glb"></a-asset-item>
+        <a-asset-item
+          id="rainbow-model"
+          src="./assets/rainbow.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="clouds-model"
+          src="./assets/clouds.glb"
+        ></a-asset-item>
+        <a-asset-item id="path-model" src="./assets/path.glb"></a-asset-item>
         <audio id="bird-sound" src="./assets/bird-chirp.mp3"></audio>
       </a-assets>
 
-      <a-marker type="pattern" url="./assets/pattern-bench.patt">
+      <a-marker type="pattern" url="./assets/pattern-park.patt">
+        <!-- Sun -->
+        <a-entity
+          gltf-model="#sun-model"
+          scale="0.5 0.5 0.5"
+          position="0 2 -30"
+        ></a-entity>
+        <!-- Clouds -->
+        <a-entity
+          gltf-model="#clouds-model"
+          scale="10 3 3"
+          position="0 2 -10"
+          animation="property: rotation; to: 360 0 0; loop: true; dur: 10000; easing: linear;"
+        ></a-entity>
+        <a-entity
+          gltf-model="#bird-model"
+          scale="0.01 0.01 0.01"
+          position="0 1.5 -10"
+          sound="src: #bird-sound; autoplay: true; loop: true"
+          animation__y="property: position.y; to: 3; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine"
+          animation__curve="property: position; from: -2 1.5 -10; to: 2 1.5 0; dir: alternate; dur: 6000; loop: true; easing: easeInOutQuad"
+          animation__face="property: rotation.y; from: 0; to: 180; dur: 3000; loop: true; delay: 3000; easing: linear;"
+          animation__tilt="property: rotation.z; from: -10; to: 10; dir: alternate; dur: 1800; loop: true; easing: easeInOutSine"
+        >
+        </a-entity>
+        <!-- Forest background -->
+        <a-entity
+          gltf-model="#forest-model"
+          scale="5 5 5"
+          position="0 0 -5"
+          rotation="0 0 0"
+        ></a-entity>
+
         <!-- Bench model -->
         <a-entity
           gltf-model="#bench-model"
-          scale="2 2 2"
-          position="0 0 0"
+          scale="1.5 1.5 2"
+          position="-0.8 0 -1.2"
+          rotation="0 90 0"
         ></a-entity>
 
-        <!-- Man with animation sequence -->
+        <!-- Man walking animation (already standing) -->
         <a-entity
           gltf-model="#man-sitting-model"
-          scale="0.5 0.5 0.5"
-          position="0 0.3 0"
+          scale="0.3 0.3 0.5"
+          position="-0.8 -0.2 0"
           rotation="0 90 0"
-          animation__1="property: position; from: 0 0.3 0; to: 0 0.5 0; dur: 1000; delay: 3000; easing: easeInOutQuad; startEvents: sit-to-stand"
-          animation__2="property: position; from: 0 0.5 0; to: 2 0.5 0; dur: 2000; delay: 0; easing: linear; startEvents: start-walking"
-          animation__3="property: rotation; from: 0 90 0; to: 0 0 0; dur: 500; delay: 0; easing: linear; startEvents: turn-to-walk"
+          animation="property: position; from: -0.8 -0.2 0; to: 2 -0.2 0.2; dur: 6000; delay: 3000; loop: true; easing: linear;"
         >
         </a-entity>
-      </a-marker>
-
-      <!-- Tree Marker -->
-      <a-marker type="pattern" url="./assets/pattern-tree.patt">
+        <!-- Walking Path -->
         <a-entity
-          gltf-model="#tree-model"
-          scale="0.6 0.6 0.6"
-          position="0 0 0"
-          animation="property: scale; dir: alternate; dur: 2000; to: 0.65 0.65 0.65; loop: true; easing: easeInOutSine"
-        >
-        </a-entity>
-        <a-text
-          value="The tree stands tall, offering shade and life to the park."
-          position="0 2 0"
-          align="center"
-          color="green"
-          scale="1.1 1.1 1"
-          shader="msdf"
-          font="https://cdn.aframe.io/fonts/mozillavr.fnt"
-        >
-        </a-text>
+          gltf-model="#path-model"
+          scale="9 2 1"
+          position="0.5 -0.4 0.2"
+          rotation="0 0 0"
+        ></a-entity>
+        <!-- Street Light -->
+        <a-entity
+          gltf-model="#street-light-model"
+          scale="0.1 0.1 0.2"
+          position="2 -0.4 -1"
+          rotation="0 180 0"
+        ></a-entity>
       </a-marker>
 
-      <!-- Bird Marker -->
-      <a-marker type="pattern" url="./assets/pattern-bird.patt">
+      <!-- 1. Sky Marker - Sun + Clouds -->
+      <a-marker type="pattern" url="./assets/pattern-sun.patt">
+        <a-entity gltf-model="#sun-model" scale="0.5 0.5 0.5" position="0 2 -5">
+        </a-entity>
+        <a-entity
+          gltf-model="#clouds-model"
+          scale="10 3 3"
+          position="0 2 -3"
+          animation="property: rotation; to: 360 0 0; loop: true; dur: 10000; easing: linear"
+        >
+        </a-entity>
+      </a-marker>
+
+      <!-- 2. Background Marker - Forest + Street Light -->
+      <a-marker type="pattern" url="./assets/pattern-tree.patt">
+        <a-entity gltf-model="#forest-model" scale="5 5 5" position="0 0 -3">
+        </a-entity>
+        <a-entity
+          gltf-model="#street-light-model"
+          scale="0.1 0.1 0.2"
+          position="2 -0.4 -1"
+          rotation="0 180 0"
+        ></a-entity>
+      </a-marker>
+
+      <!-- 3. Bench & Bird Marker -->
+      <a-marker type="pattern" url="./assets/pattern-bench.patt">
+        <a-entity
+          gltf-model="#bench-model"
+          scale="1.5 1.5 2"
+          position="-0.8 0 -1.2"
+          rotation="0 90 0"
+        >
+        </a-entity>
         <a-entity
           gltf-model="#bird-model"
-          scale="0.4 0.4 0.4"
-          position="0 2 0"
-          sound="src: #bird-sound; autoplay: true; loop: true"
-          animation="property: position; to: 0 3 0; dir: alternate; dur: 1500; loop: true; easing: easeInOutSine"
-          animation__rot="property: rotation; to: 0 360 0; loop: true; dur: 6000; easing: linear"
-        >
-        </a-entity>
-      </a-marker>
-
-      <!-- Bike Marker -->
-      <a-marker type="pattern" url="./assets/pattern-bicycle.patt">
-        <a-entity
-          gltf-model="#bike-model"
           scale="0.01 0.01 0.01"
-          position="-1 -1 -1"
-          animation="property: position; to: -2 0 0; dir: alternate; dur: 4000; loop: true; easing: linear"
+          position="0 1.5 -1"
+          sound="src: #bird-sound; autoplay: true; loop: true"
+          animation__y="property: position.y; to: 3; dir: alternate; dur: 2000; loop: true"
+          animation__tilt="property: rotation.z; from: -10; to: 10; dir: alternate; dur: 1800; loop: true"
         >
         </a-entity>
       </a-marker>
 
+      <!-- 4. Path & Man Marker -->
+      <a-marker type="pattern" url="./assets/pattern-man.patt">
+        <a-entity
+          gltf-model="#path-model"
+          scale="9 2 1"
+          position="0.5 -0.4 0.2"
+        >
+        </a-entity>
+        <a-entity
+          gltf-model="#man-sitting-model"
+          scale="0.3 0.3 0.5"
+          position="-0.8 -0.2 0"
+          rotation="0 90 0"
+          animation="property: position; from: -0.8 -0.2 0; to: 2 -0.2 0.2; dur: 6000; delay: 3000; loop: true; easing: linear;"
+        >
+        </a-entity>
+      </a-marker>
       <!-- Camera -->
       <a-entity camera></a-entity>
     </a-scene>
@@ -146,39 +226,6 @@
       // Wait for the scene to load, then hide the loader
       document.querySelector("a-scene").addEventListener("loaded", function () {
         document.querySelector(".arjs-loader").style.display = "none";
-      });
-      // Event listeners for animations
-      document.querySelector("a-scene").addEventListener("loaded", function () {
-        setTimeout(function () {
-          // Get the man entity
-          const man = document.querySelector(
-            '[gltf-model="#man-sitting-model"]'
-          );
-
-          // Trigger first animation: stand up
-          man.emit("sit-to-stand");
-
-          // After standing, turn to walk
-          setTimeout(function () {
-            man.emit("turn-to-walk");
-          }, 4000);
-
-          // After turning, start walking
-          setTimeout(function () {
-            man.emit("start-walking");
-          }, 4500);
-
-          // Loop the sequence
-          setTimeout(function () {
-            // Reset position and start again
-            man.setAttribute("position", "0 0.3 0");
-            man.setAttribute("rotation", "0 90 0");
-            setTimeout(function () {
-              // Restart sequence
-              man.emit("sit-to-stand");
-            }, 2000);
-          }, 10000);
-        }, 5000); // Start the sequence 5 seconds after scene loads
       });
     </script>
   </body>
