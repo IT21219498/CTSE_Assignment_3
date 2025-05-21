@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Park AR Debug Mode</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+      .arjs-loader {
+        position: fixed;
+        z-index: 999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .arjs-loader div {
+        text-align: center;
+        font-size: 1.25em;
+        color: white;
+      }
+      .debug-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px;
+        font-family: monospace;
+        z-index: 100;
+        max-width: 100%;
+      }
+      .marker-guide {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 300px;
+        border: 4px dashed yellow;
+        border-radius: 8px;
+        z-index: 50;
+        pointer-events: none;
+      }
+      .debug-controls {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 100;
+      }
+      .debug-controls button {
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: 1px solid white;
+        padding: 8px;
+        margin: 5px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body style="margin: 0; overflow: hidden">
+    <div class="arjs-loader">
+      <div>
+        Loading AR Experience...<br /><small
+          >Please allow camera access when prompted</small
+        >
+      </div>
+    </div>
+
+    <!-- Debug panel for status updates -->
+    <div class="debug-panel" id="debug">Initializing camera...</div>
+
+    <!-- Visual guide for marker positioning -->
+    <div class="marker-guide" id="markerGuide"></div>
+
+    <!-- Debug controls -->
+    <div class="debug-controls">
+      <button id="testHiro">Test with Virtual Hiro</button>
+      <button id="toggleDebug">Enable Detailed Debug</button>
+    </div>
+
+    <!-- The AR scene -->
+    <a-scene
+      embedded
+      renderer="logarithmicDepthBuffer: true; precision: medium;"
+      vr-mode-ui="enabled: false"
+      arjs="sourceType: webcam; 
+            trackingMethod: best;
+            detectionMode: mono_and_matrix; 
+            matrixCodeType: 3x3;
+            patternRatio: 0.65;
+            cameraParametersUrl: https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@master/data/data/camera_para.dat;
+            debugUIEnabled: true;
+            maxDetectionRate: 30;
+            canvasWidth: 1280; 
+            canvasHeight: 960;"
+    >
+      <!-- Assets -->
+      <a-assets timeout="100000">
+        <a-asset-item id="bench-model" src="./assets/bench.glb"></a-asset-item>
+        <a-asset-item id="tree-model" src="./assets/tree.glb"></a-asset-item>
+        <a-asset-item id="bird-model" src="./assets/bird.glb"></a-asset-item>
+        <a-asset-item id="bike-model" src="./assets/bike.glb"></a-asset-item>
+        <!-- Fallback assets for debugging -->
+        <img
+          id="hiro"
+          src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
+        />
+      </a-assets>
+
+      <!-- Hiro marker (most reliable for testing) -->
+      <a-marker preset="hiro" id="hiroMarker">
+        <a-box
+          position="0 1 0"
+          color="red"
+          scale="1 1 1"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 5000"
+        ></a-box>
+        <a-text
+          value="HIRO MARKER DETECTED!"
+          position="0 2 0"
+          align="center"
+          color="white"
+          scale="1 1 1"
+        ></a-text>
+      </a-marker>
+
+      <!-- Custom pattern markers -->
+      <a-marker
+        type="pattern"
+        url="./assets/pattern-bench.patt"
+        id="benchMarker"
+      >
+        <a-entity
+          gltf-model="#bench-model"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+        ></a-entity>
+        <a-text
+          value="BENCH MARKER DETECTED!"
+          position="0 2 0"
+          align="center"
+          color="yellow"
+          scale="1 1 1"
+        ></a-text>
+      </a-marker>
+
+      <a-marker type="pattern" url="./assets/pattern-tree.patt" id="treeMarker">
+        <a-entity
+          gltf-model="#tree-model"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+        ></a-entity>
+        <a-text
+          value="TREE MARKER DETECTED!"
+          position="0 2 0"
+          align="center"
+          color="green"
+          scale="1 1 1"
+        ></a-text>
+      </a-marker>
+
+      <a-marker type="pattern" url="./assets/pattern-bird.patt" id="birdMarker">
+        <a-entity
+          gltf-model="#bird-model"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+        ></a-entity>
+        <a-text
+          value="BIRD MARKER DETECTED!"
+          position="0 2 0"
+          align="center"
+          color="blue"
+          scale="1 1 1"
+        ></a-text>
+      </a-marker>
+
+      <a-marker
+        type="pattern"
+        url="./assets/pattern-bicycle.patt"
+        id="bikeMarker"
+      >
+        <a-entity
+          gltf-model="#bike-model"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+        ></a-entity>
+        <a-text
+          value="BIKE MARKER DETECTED!"
+          position="0 2 0"
+          align="center"
+          color="purple"
+          scale="1 1 1"
+        ></a-text>
+      </a-marker>
+
+      <!-- Camera entity -->
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+      // Wait for document to be fully loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get references to DOM elements
+        const debugPanel = document.getElementById("debug");
+        const markerGuide = document.getElementById("markerGuide");
+        const toggleDebugBtn = document.getElementById("toggleDebug");
+        const testHiroBtn = document.getElementById("testHiro");
+        const scene = document.querySelector("a-scene");
+        const loader = document.querySelector(".arjs-loader");
+        let markerFound = false;
+
+        // Function to update debug panel
+        function updateDebug(text) {
+          debugPanel.textContent = text;
+        }
+
+        // Handle scene loaded
+        scene.addEventListener("loaded", function () {
+          loader.style.display = "none";
+          updateDebug("Camera ready! Place marker in the dashed yellow area.");
+        });
+
+        // Handle marker detection
+        document.querySelectorAll("a-marker").forEach((marker) => {
+          marker.addEventListener("markerFound", function () {
+            markerFound = true;
+            markerGuide.style.borderColor = "green";
+            updateDebug(`MARKER DETECTED! ID: ${marker.id}`);
+          });
+
+          marker.addEventListener("markerLost", function () {
+            markerGuide.style.borderColor = "yellow";
+            updateDebug("Marker lost. Try adjusting position or lighting.");
+          });
+        });
+
+        // After 10 seconds, if no marker detected, show help
+        setTimeout(function () {
+          if (!markerFound) {
+            updateDebug(
+              "No markers detected. Try better lighting or use Hiro marker."
+            );
+          }
+        }, 10000);
+
+        // Test with Virtual Hiro button
+        testHiroBtn.addEventListener("click", function () {
+          const hiroImg = document.createElement("img");
+          hiroImg.src =
+            "https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png";
+          hiroImg.style.position = "fixed";
+          hiroImg.style.top = "50%";
+          hiroImg.style.left = "50%";
+          hiroImg.style.transform = "translate(-50%, -50%)";
+          hiroImg.style.zIndex = "1000";
+          hiroImg.style.width = "200px";
+          document.body.appendChild(hiroImg);
+
+          updateDebug("Virtual Hiro marker added for testing.");
+
+          setTimeout(() => {
+            document.body.removeChild(hiroImg);
+            updateDebug("Virtual Hiro marker removed.");
+          }, 10000);
+        });
+
+        // Toggle debug UI button
+        toggleDebugBtn.addEventListener("click", function () {
+          const arjsSystem = scene.systems["arjs"];
+          if (arjsSystem) {
+            // Get current arjs component data
+            const arjsData = scene.getAttribute("arjs");
+
+            // Toggle the debugUIEnabled property
+            const isDebugEnabled = arjsData.debugUIEnabled === true;
+
+            // Update the arjs component with the new setting
+            scene.setAttribute(
+              "arjs",
+              Object.assign({}, arjsData, {
+                debugUIEnabled: !isDebugEnabled,
+              })
+            );
+
+            // Update button text
+            toggleDebugBtn.textContent = isDebugEnabled
+              ? "Enable Detailed Debug"
+              : "Disable Detailed Debug";
+
+            updateDebug("Debug UI toggled - check for threshold view below");
+          } else {
+            updateDebug("Cannot toggle debug UI - AR system not available");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
